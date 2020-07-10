@@ -1,0 +1,115 @@
+{% extends 'shop/basic.html'%}
+{% block title%}MyAwesomeCart Tracker{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="col">
+        <h2>Enter your Order Id and Email address to track your order</h2>
+        <form method="post" action="#" id="trackerForm">{% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputname">Order Id</label>
+                    <input type="text" name="orderId" class="form-control" id="orderId" placeholder="Order Id" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Email</label>
+                    <input type="email" name="email" class="form-control" id="inputEmail4" placeholder="Email" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Track Order</button>
+        </form>
+    </div>
+    <div class="col my-4">
+        <h2>Your Order Status:</h2>
+        <div>
+            <ul class="list-group" id="items">
+                Enter your order Id, Email, and click Track Order to find details about your order!
+            </ul>
+        </div>
+        <h2>Your Order Details:</h2>
+        <div>
+            <ul class="list-group" id="citems">
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+$('#trackerForm').submit(function(event) {
+    // body...
+    $('#items').empty();
+    var formData = {
+        'orderId': $('input[name=orderId]').val(),
+        'email': $('input[name=email]').val(),
+        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+    };
+    $.ajax({
+            type: 'POST',
+            url: '/shop/tracker/',
+            data: formData,
+            encode: true
+        })
+        .done(function(data) {
+            $('#citems').empty();
+
+            console.log(data)
+            data = JSON.parse(data);
+            updates = data[0];
+            console.log(updates)
+            if (data.length > 0 & updates != {}) {
+
+                for (i = 0; i < updates.length; i++) {
+                    var d = new Date(updates[i]['time']);
+                    let text = updates[i]['text'];
+                    let time = updates[i]['time'];
+                    mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${text}
+                    <span class="badge-primary badge-pill blog-post-meta">${d.toUTCString()}</span>
+                </li>`
+                $('#items').append(mystr);
+            }
+                // fill in the order details
+                cart = JSON.parse(data[1]);
+                console.log(cart)
+                var j = 0;
+                for (item in cart) {
+                    j = j + 1;
+                    let nm = j;
+                    let name = cart[item][1];
+                    let qty = cart[item][0];
+                    if (j==1){
+                        mysstr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            S.no. <b>    Item Description</b>
+                            <span class="badge badge-primary badge-pill">Qty</span>
+                                    </li>`
+
+                        $('#citems').append(mysstr);
+                         mysstr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${nm}. ${name}
+                            <span class="badge badge-primary badge-pill">${qty}</span>
+                                    </li>`
+
+                        $('#citems').append(mysstr);
+                    }else{
+                        mysstr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${nm}. ${name}
+                            <span class="badge badge-primary badge-pill">${qty}</span>
+                                    </li>`
+
+                        $('#citems').append(mysstr);
+                    }
+
+
+
+                }
+            } else {
+                mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">Sorry, We are not able to fetch this order id and email. Make sure to type correct order Id or email</li>`
+                $('#items').append(mystr);
+                $('#citems').append(mystr);
+            }
+        });
+    event.preventDefault();
+
+});
+</script>
+{% endblock %}

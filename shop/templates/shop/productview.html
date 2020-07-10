@@ -1,0 +1,129 @@
+{% extends 'shop/basic.html'%}
+{% block title%}{{productv.product_name}}{% endblock %}
+{% block css %}
+img
+{
+cursor: pointer;
+transition: 0.3s;
+}
+img:hover
+{
+opacity: 0.7;
+box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+<!-- /* The Modal (background) */ -->
+.modal {
+display: none;
+position: fixed;
+z-index: 1;
+padding-top: 100px;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+background-color: rgb(0,0,0);
+background-color: rgba(0,0,0,0.9);
+}
+<!-- /* Modal Content (image) */ -->
+.modal-content {
+margin: auto;
+display: block;
+width: 80%;
+max-width: 700px;
+}
+<!-- /* Caption of Modal Image */ -->
+#caption {
+margin: auto;
+display: block;
+width: 80%;
+max-width: 700px;
+text-align: center;
+color: #ccc;
+padding: 10px 0;
+height: 150px;
+}
+<!-- /* Add Animation */ -->
+.modal-content, #caption {
+animation-name: zoom;
+animation-duration: 0.6s;
+}
+@keyframes zoom {
+from {transform: scale(0.1)}
+to {transform: scale(1)}
+}
+<!-- /* The Close Button */ -->
+.close {
+position: absolute;
+top: 100px;
+right: 35px;
+color: #f1f1f1;
+font-size: 40px;
+font-weight: bold;
+transition: 0.3s;
+}
+.close:hover,
+.close:focus {
+color: #bbb;
+text-decoration: none;
+cursor: pointer;
+}
+<!-- /* 100% Image Width on Smaller Screens */ -->
+@media only screen and (max-width: 700px){
+.modal-content {
+width: 100%;
+}
+}
+{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="row">
+                <img id="myImg" src="/media/{{productv.image}}" width="350px" height="400px" alt="{{productv.product_name}}">
+            </div>
+            <div class="row">
+                <button class="btn btn-primary mx-3 my-3">Buy Now</button>
+                <button class="btn btn-primary my-3">Add to Cart</button>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h4><b>{{productv.product_name}}</b></h4>
+            <h5><b>Rs.{{productv.price}}</b></h5>
+            <h5>Description:</h5>
+            <p>{{productv.product_desc}}</p>
+        </div>
+    </div>
+</div>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+    <div id="caption"></div>
+</div>
+{% block js %}
+<!-- here to show the image modal -->
+<script>
+// Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var img = document.getElementById('myImg');
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+img.onclick = function() {
+    modal.style.display = "block";
+    modalImg.src = this.src;
+    captionText.innerHTML = this.alt;
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+</script>
+{% endblock %}
+{% endblock %}
